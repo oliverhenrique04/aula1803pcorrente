@@ -1,226 +1,117 @@
-# Relatório da NOME DA ATIVIDADE
+# Relatório da Prática de Multiprocessamento
 
-**Disciplina:** 
-**Aluno(s):**
-**Turma:**
-**Professor:**
-**Data:**
-
----
-
-# 1. Descrição do Problema
-
-Descreva o problema computacional resolvido pelo programa.
-
-## Orientações para preenchimento
-
-Explique:
-
-* Qual problema foi implementado
-* Qual algoritmo foi utilizado
-* Qual o tamanho da entrada utilizada nos testes
-* Qual o objetivo da paralelização
-
-**Questões que devem ser respondidas:**
-
-* Qual é o objetivo do programa?
-* Qual o volume de dados processado?
-* Qual algoritmo foi utilizado?
-* Qual a complexidade aproximada do algoritmo?
+**Disciplina:** Programação Concorrente e Distribuída  
+**Aluno(s):** Oliver Henrique Ferreira de Jesus  
+**Professor:** Rafael Marconi  
+**Data:** 18/03/2026  
 
 ---
 
-# 2. Ambiente Experimental
+## 1. Descrição do Problema
 
-Descreva o ambiente em que os experimentos foram realizados.
+O problema consiste em realizar a leitura de um arquivo de texto de grande porte contendo milhões de números e realizar a soma de todos os seus valores, avaliando o impacto no tempo de execução ao variar a quantidade de processos dedicados à tarefa.
 
-## Orientações
+* **Objetivo do programa:** Somar uma base gigante de números lidos de um arquivo `.txt`, dividindo o processamento matemático entre múltiplos núcleos da CPU para verificar se ocorre redução no tempo total de execução.
+* **Volume de dados:** Arquivo `numero2.txt` contendo grande volume de linhas com dados numéricos.
+* **Algoritmo utilizado:** Padrão "Delegação em Lotes" (Chunking) com Pool de Trabalhadores (Worker Pool). Uma thread principal realiza a leitura sequencial do arquivo e agrupa as linhas em blocos de 100.000 unidades. Cada bloco é enviado de forma assíncrona (`apply_async`) para um processo trabalhador independente, que realiza a conversão de string para float e calcula a soma parcial. Por fim, a thread principal soma os resultados parciais.
+* **Complexidade:** A complexidade de tempo é aproximadamente O(N), onde N é o número de linhas do arquivo. A divisão em p processos tenta transformar o custo de processamento para O(N/p), embora a complexidade de I/O permaneça O(N).
 
-Informar as características do hardware e software utilizados na execução dos testes.
+---
+
+## 2. Ambiente Experimental
 
 | Item                        | Descrição |
 | --------------------------- | --------- |
-| Processador                 |           |
-| Número de núcleos           |           |
-| Memória RAM                 |           |
-| Sistema Operacional         |           |
-| Linguagem utilizada         |           |
-| Biblioteca de paralelização |           |
-| Compilador / Versão         |           |
+| Processador                 | [Preencha com o modelo, ex: Intel Core i7] |
+| Número de núcleos           | [Ex: 6 núcleos físicos / 12 lógicos] |
+| Memória RAM                 | [Ex: 16 GB DDR4] |
+| Sistema Operacional         | [Ex: Windows 11 / Ubuntu 22.04] |
+| Linguagem utilizada         | Python 3 |
+| Biblioteca de paralelização | `multiprocessing` (nativa do Python) |
+| Compilador / Versão         | Interpretador CPython [Ex: Versão 3.10.x] |
 
 ---
 
-# 3. Metodologia de Testes
+## 3. Metodologia de Testes
 
-Explique como os experimentos foram conduzidos.
+Os testes avaliaram o desempenho computacional escalando o número de processos trabalhadores utilizando a biblioteca `multiprocessing`.
 
-## Orientações
-
-Descrever:
-
-* Como o tempo de execução foi medido
-* Quantas execuções foram realizadas
-* Se foi utilizada média dos tempos
-* Qual tamanho da entrada foi usado
-
-### Configurações testadas
-
-Os experimentos devem ser realizados nas seguintes configurações:
-
-* 1 thread/processo (versão serial)
-* 2 threads/processos
-* 4 threads/processos
-* 8 threads/processos
-* 12 threads/processos
-
-### Procedimento experimental
-
-Descrever:
-
-* Número de execuções para cada configuração
-* Forma de cálculo da média
-* Condições de execução (ex: máquina dedicada, carga do sistema, etc.)
+* **Medição de Tempo:** O tempo foi cronometrado via código utilizando a função `time.time()` da biblioteca nativa `time`.
+* **Execuções e Entradas:** O programa foi testado utilizando uma única massa de dados (o arquivo `numero2.txt`). 
+* **Configurações e Procedimento:** Os testes foram realizados alterando a entrada da quantidade de processos (1, 2, 4, 8 e 12). Os tempos coletados são reflexo destas rodadas.
 
 ---
 
-# 4. Resultados Experimentais
-
-Preencha a tabela com os **tempos médios de execução** obtidos.
-
-## Orientações
-
-* O tempo deve ser informado em **segundos**
-* Utilizar a **média das execuções**
+## 4. Resultados Experimentais
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 | -------------------- | --------------------- |
-| 1                    |                       |
-| 2                    |                       |
-| 4                    |                       |
-| 8                    |                       |
-| 12                   |                       |
+| 1                    |  1,73                 |
+| 2                    |  1,72                 |
+| 4                    |  1,76                 |
+| 8                    |  1,75                 |
+| 12                   |  1,79                 |
 
 ---
 
-# 5. Cálculo de Speedup e Eficiência
+## 5. Cálculo de Speedup e Eficiência
 
-## Fórmulas Utilizadas
+Para a formulação, **T(1) = 1,73s**.
 
-### Speedup
-
-```
-Speedup(p) = T(1) / T(p)
-```
-
-Onde:
-
-* **T(1)** = tempo da execução serial
-* **T(p)** = tempo com p threads/processos
-
-### Eficiência
-
-```
-Eficiência(p) = Speedup(p) / p
-```
-
-Onde:
-
-* **p** = número de threads ou processos
+* **Speedup P=2:** 1,73 / 1,72 = 1,0058 | **Eficiência P=2:** 1,0058 / 2 = 0,5029
+* **Speedup P=4:** 1,73 / 1,76 = 0,9829 | **Eficiência P=4:** 0,9829 / 4 = 0,2457
+* **Speedup P=8:** 1,73 / 1,75 = 0,9885 | **Eficiência P=8:** 0,9885 / 8 = 0,1235
+* **Speedup P=12:** 1,73 / 1,79 = 0,9664 | **Eficiência P=12:** 0,9664 / 12 = 0,0805
 
 ---
 
-# 6. Tabela de Resultados
-
-Preencha a tabela abaixo utilizando os tempos medidos.
+## 6. Tabela de Resultados
 
 | Threads/Processos | Tempo (s) | Speedup | Eficiência |
 | ----------------- | --------- | ------- | ---------- |
-| 1                 |           | 1.0     | 1.0        |
-| 2                 |           |         |            |
-| 4                 |           |         |            |
-| 8                 |           |         |            |
-| 12                |           |         |            |
+| 1                 | 1.73      | 1.00    | 1.00       |
+| 2                 | 1.72      | 1.01    | 0.50       |
+| 4                 | 1.76      | 0.98    | 0.25       |
+| 8                 | 1.75      | 0.99    | 0.12       |
+| 12                | 1.79      | 0.97    | 0.08       |
 
 ---
 
-# 7. Gráfico de Tempo de Execução
-
-Construa um gráfico mostrando o **tempo de execução em função do número de threads/processos**.
-
-## Orientações
-
-* Eixo X: número de threads/processos
-* Eixo Y: tempo de execução (segundos)
-
-Inserir o gráfico abaixo:
+## 7. Gráfico de Tempo de Execução
 
 ![Gráfico Tempo Execução](graficos/tempo_execucao.png)
 
 ---
 
-# 8. Gráfico de Speedup
-
-Construa um gráfico mostrando o **speedup obtido**.
-
-## Orientações
-
-* Eixo X: número de threads/processos
-* Eixo Y: speedup
-* Incluir também a **linha de speedup ideal (linear)** para comparação
-
-Inserir o gráfico abaixo:
+## 8. Gráfico de Speedup
 
 ![Gráfico Speedup](graficos/speedup.png)
 
 ---
 
-# 9. Gráfico de Eficiência
-
-Construa um gráfico mostrando a **eficiência da paralelização**.
-
-## Orientações
-
-* Eixo X: número de threads/processos
-* Eixo Y: eficiência
-* Valores entre 0 e 1
-
-Inserir o gráfico abaixo:
+## 9. Gráfico de Eficiência
 
 ![Gráfico Eficiência](graficos/eficiencia.png)
 
 ---
 
-# 10. Análise dos Resultados
+## 10. Análise dos Resultados
 
-Realize uma análise crítica dos resultados obtidos.
+* **O speedup obtido foi próximo do ideal?** Não. O speedup real estagnou em torno de 1.0, distanciando-se completamente do cenário ideal de ganho linear.
+* **A aplicação apresentou escalabilidade?** Não. Aumentar o número de processos não reduziu o tempo da tarefa. Para 4, 8 e 12 processos, o tempo foi ligeiramente pior do que a execução serial.
+* **Em qual ponto a eficiência começou a cair?** A eficiência caiu drasticamente logo ao adotar o 2º processo (caindo para 50%), beirando a zero com 12 processos (8%).
+* **Houve overhead de paralelização?** Sim. O gargalo e as limitações observadas devem-se inteiramente ao overhead (custo extra) de gerenciar a paralelização e à lei de Amdahl. 
 
-## Questões a serem respondidas
-
-* O speedup obtido foi próximo do ideal?
-* A aplicação apresentou escalabilidade?
-* Em qual ponto a eficiência começou a cair?
-* O número de threads ultrapassa o número de núcleos físicos da máquina?
-* Houve overhead de paralelização?
-
-Discutir possíveis causas para:
-
-* perda de desempenho
-* gargalos no algoritmo
-* sincronização entre threads/processos
-* comunicação entre processos
-* contenção de memória ou cache
+**Causas da perda de desempenho:**
+1. **Gargalo de I/O:** O arquivo é lido sequencialmente pela thread principal. O tempo de leitura no disco é maior que o tempo de soma na CPU.
+2. **Overhead de Comunicação (IPC):** Agrupar linhas, serializar os dados e enviá-los para outros processos na memória custa mais tempo do que simplesmente somar os números na própria thread principal.
 
 ---
 
-# 11. Conclusão
+## 11. Conclusão
 
-Apresente as conclusões do experimento.
+O experimento demonstra que paralelizar o processamento não se traduz automaticamente em redução de tempo. O ganho provido pelo paralelismo não superou o gargalo da leitura em disco (I/O) e o overhead de comunicação de envio massivo de dados (strings) para processos secundários.
 
-## Sugestões de pontos a comentar
+Não houve um "melhor número" de processos. O programa não escala bem com esta arquitetura. 
 
-* O paralelismo trouxe ganho significativo de desempenho?
-* Qual foi o melhor número de threads/processos?
-* O programa escala bem com o aumento do paralelismo?
-* Quais melhorias poderiam ser feitas na implementação?
-
----
+**Melhorias:** A leitura do arquivo deveria ser paralelizada. Em vez da thread principal ler e enviar os dados, o arquivo deveria ser dividido em *bytes offsets*, permitindo que cada processo leia sua própria parte do arquivo diretamente do disco de forma independente, anulando o gargalo sequencial.

@@ -25,7 +25,7 @@ O problema consiste em realizar a leitura de um arquivo de texto de grande porte
 | Processador                 | Intel Core i5 12500 |
 | Número de núcleos           | 6 núcleos físicos / 12 lógicos] |
 | Memória RAM                 | 16 GB DDR4] |
-| Sistema Operacional         | Windows 11] |
+| Sistema Operacional         | Windows 11 |
 | Linguagem utilizada         | Python 3 |
 | Biblioteca de paralelização | `multiprocessing` (nativa do Python) |
 | Compilador / Versão         | Interpretador CPython [Ex: Versão 3.10.x] |
